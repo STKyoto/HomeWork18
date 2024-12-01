@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Note List</h1>
+
+
+    <div th:if="${not #strings.isEmpty(message)}" class="alert alert-success mt-3" th:text="${message}"></div>
+
+
+    <table class="table table-bordered mt-3">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="note : ${notes}">
+            <td th:text="${note.title}">Note Title</td>
+            <td>
+
+                <a th:href="@{/note/view(id=${note.id})}" class="btn btn-info btn-sm">View</a>
+
+
+                <a th:href="@{/note/edit(id=${note.id})}" class="btn btn-warning btn-sm">Edit</a>
+
+
+                <form th:action="@{/note/delete}" method="post" style="display:inline;">
+                    <input type="hidden" name="id" th:value="${note.id}">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <div class="mt-4">
+        <a th:href="@{/note/edit(id=0)}" class="btn btn-success">Create New Note</a>
+    </div>
+    <div class="mt-4">
+        <a href="/main" class="btn btn-secondary">Back to Main Menu</a>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

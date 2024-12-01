@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Note</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Note Details</h1>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2 th:text="${note.title}">Note Title</h2>
+        </div>
+        <div class="card-body">
+            <p th:text="${note.content}">Note Content</p>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/note/list}" class="btn btn-secondary">Back to Note List</a>
+        <a th:href="@{/note/edit(id=${note.id})}" class="btn btn-warning">Edit Note</a>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
