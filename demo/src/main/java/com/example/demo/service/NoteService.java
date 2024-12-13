@@ -1,6 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Note;
+import com.example.demo.repository.NoteRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -8,45 +11,34 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class NoteService {
-    private final Map<Long, Note> notesStorage = new HashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
+    @Autowired
+    private NoteRepository noteRepository;
 
-
-    public List<Note> listAll() {
-        return new ArrayList<>(notesStorage.values());
+    @Transactional
+    public void add(String title, String context) {
+        Note note = new Note(title, context);
+        noteRepository.save(note);
     }
 
-    public Note add(String title, String context) {
-        Note note = new Note();
-        long id = idGenerator.getAndIncrement();
-        note.setId(id);
-        note.setTitle(title);
-        note.setContent(context);
-        notesStorage.put(id, note);
-        return note;
-    }
-
+    @Transactional
     public void deleteById(long id) {
-        if (!notesStorage.containsKey(id)) {
-            throw new NoSuchElementException("Note with id " + id + " not found");
-        }
-        notesStorage.remove(id);
+        noteRepository.deleteById(id);
     }
 
+    @Transactional
     public void update(Long id, String title, String context) {
-        if (!notesStorage.containsKey(id)) {
-            throw new NoSuchElementException("Note with id " + id + " not found");
-        }
-        Note existingNote = notesStorage.get(id);
-        existingNote.setTitle(title);
-        existingNote.setContent(context);
+        Note findedNote = noteRepository.getReferenceById(id);
+        findedNote.setContent(context);
+        findedNote.setTitle(title);
     }
 
+    @Transactional
     public Note getById(long id) {
-        Note note = notesStorage.get(id);
-        if (note == null) {
-            throw new NoSuchElementException("Note with id " + id + " not found");
-        }
-        return note;
+        return noteRepository.getReferenceById(id);
+    }
+
+    @Transactional
+    public List<Note> listAll(){
+        return noteRepository.findAll();
     }
 }
