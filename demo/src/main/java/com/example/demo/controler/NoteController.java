@@ -21,6 +21,7 @@ public class NoteController {
     @Autowired
     private NoteService noteService;
 
+
     @GetMapping("/main")
     public String mainPage() {
         return "main";
