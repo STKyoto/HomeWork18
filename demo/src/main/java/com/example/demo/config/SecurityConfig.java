@@ -4,8 +4,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -13,7 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Создаем in-memory пользователя для примера
     @Bean
     public UserDetailsService userDetailsService() {
         return new InMemoryUserDetailsManager(
@@ -21,24 +23,20 @@ public class SecurityConfig {
                 User.withUsername("admin").password("{noop}admin").roles("ADMIN").build()
         );
     }
-
-    // Настроим фильтр безопасности
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .requestMatchers("/login").permitAll()  // Разрешаем доступ ко странице логина
-                .anyRequest().authenticated()         // Для всех остальных страниц требуется аутентификация
-                .and()
-                .formLogin()
-                .loginPage("/login")                    // Страница логина
-                .loginProcessingUrl("/login")           // URL для обработки логина
-                .defaultSuccessUrl("/home", true)       // Страница после успешного входа
-                .failureUrl("/login?error=true")        // Страница при ошибке входа
-                .and()
-                .logout()
-                .permitAll();                         // Разрешаем всем выходить из системы
-
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/login").permitAll()
+                            .requestMatchers("/note/*").authenticated();
+                });
+        http.formLogin(login -> login.loginProcessingUrl("/login"));
+        http.logout(logout -> logout.logoutUrl("/logout"));
         return http.build();
+    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
