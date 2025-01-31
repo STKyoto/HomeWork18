@@ -25,7 +25,7 @@ public class AuthController {
                         @RequestParam("password") String password,
                         Model model) {
         if (isValidUser(username, password)) {
-            return "redirect:/welcome";
+            return "redirect:/note";
         } else {
             model.addAttribute("error", "Incorrect data");
             return "login";

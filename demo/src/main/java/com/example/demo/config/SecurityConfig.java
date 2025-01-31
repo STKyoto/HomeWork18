@@ -28,11 +28,16 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/login").permitAll()
+                    auth.requestMatchers("/login", "/register").permitAll()
                             .requestMatchers("/note/*").authenticated();
-                });
-        http.formLogin(login -> login.loginProcessingUrl("/login"));
-        http.logout(logout -> logout.logoutUrl("/logout"));
+                })
+        .formLogin(login -> login
+                .loginPage("/login")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/main")
+                .failureUrl("/login?error"))
+        .logout(logout -> logout.logoutUrl("/logout"));
         return http.build();
     }
     @Bean

@@ -73,8 +73,4 @@ public class NoteController {
         redirectAttributes.addFlashAttribute("message", "Note saved successfully");
         return "redirect:/note/list";
     }
-
-
-
-
 }
