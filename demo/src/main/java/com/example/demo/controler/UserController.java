@@ -15,7 +15,7 @@ public class UserController {
 
     @PostMapping("/register")
     public String registerUser(@RequestParam String username, @RequestParam String password) {
-        userService.createUser(username, password, "ROLE_USER");
+        userService.createUser(username, password, "USER");
         return "redirect:/login";
     }
 
