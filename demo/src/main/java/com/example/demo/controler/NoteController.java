@@ -29,7 +29,7 @@ public class NoteController {
 
     @GetMapping("/main")
     public String mainPage(Model model, Principal principal) {
-        if (principal != null) { // Check if user is logged in
+        if (principal != null) {
             String username = principal.getName();
             Optional<User> existingUser = userRepository.findByUserName(username);
             if (existingUser.isPresent()) {
