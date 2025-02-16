@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,6 +28,10 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+        .error { /* Style for error messages */
+            color: red;
+            margin-top: 5px; /* Add some spacing */
+        }
         button {
             background-color: #28a745;
             color: white;
@@ -46,9 +50,14 @@
 
 <div class="container">
     <h2>Registration</h2>
-    <form action="/register" method="post">
-        <input type="text" name="username" placeholder="Enter login" required>
-        <input type="password" name="password" placeholder="Enter password" required>
+    <form th:action="@{/register}" th:object="${user}" method="post">
+        <input type="text" th:field="*{userName}" placeholder="Enter login" required>
+        <div th:if="${#fields.hasErrors('userName')}" class="error" th:errors="*{userName}"></div> <br>
+
+        <input type="password" th:field="*{password}" placeholder="Enter password" required>
+        <div th:if="${#fields.hasErrors('password')}" class="error" th:errors="*{password}"></div> <br>
+
+        <div th:if="${errorMessage}" class="error" th:text="${errorMessage}"></div> <br>
         <button type="submit">Confirm</button>
     </form>
 </div>

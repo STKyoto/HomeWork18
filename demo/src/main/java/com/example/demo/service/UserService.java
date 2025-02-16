@@ -1,12 +1,12 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.UserAlreadyExistsException;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +30,7 @@ public class UserService implements UserDetailsService {
     public String createUser(String username, String rawPassword, String roleName) {
         Optional<User> existingUser = userRepository.findByUserName(username);
         if (existingUser.isPresent()) {
-            return "User already exist";
+            throw new UserAlreadyExistsException("User with username " + username + " already exist.");
         }
 
         Role role = roleRepository.findByName(roleName).orElseGet(() -> {
