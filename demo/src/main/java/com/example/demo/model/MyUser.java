@@ -24,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+public class MyUser {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     @SequenceGenerator(name = "user_seq", sequenceName = "seq_users_id", allocationSize = 1)
@@ -39,9 +39,4 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     List<Role> roles = new ArrayList<>();
-
-    public void addRole(Role role) {
-        roles.add(role);
-        role.getUsers().add(this);
-    }
 }

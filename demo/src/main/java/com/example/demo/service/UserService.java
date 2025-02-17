@@ -1,14 +1,15 @@
 package com.example.demo.service;
 
 import com.example.demo.exception.UserAlreadyExistsException;
+import com.example.demo.model.MyUser;
 import com.example.demo.model.Role;
-import com.example.demo.model.User;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,7 +29,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public String createUser(String username, String rawPassword, String roleName) {
-        Optional<User> existingUser = userRepository.findByUserName(username);
+        Optional<MyUser> existingUser = userRepository.findByUserName(username);
         if (existingUser.isPresent()) {
             throw new UserAlreadyExistsException("User with username " + username + " already exist.");
         }
@@ -39,22 +40,22 @@ public class UserService implements UserDetailsService {
             return roleRepository.save(newRole);
         });
 
-        User newUser = new User();
-        newUser.setUserName(username);
-        newUser.setPassword(passwordEncoder.encode(rawPassword));
-        newUser.getRoles().add(role);
-        userRepository.save(newUser);
+        MyUser newMyUser = new MyUser();
+        newMyUser.setUserName(username);
+        newMyUser.setPassword(passwordEncoder.encode(rawPassword));
+        newMyUser.getRoles().add(role);
+        userRepository.save(newMyUser);
 
         return "User successfuly created";
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUserName(username)
+        MyUser myUser = userRepository.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        Set<GrantedAuthority> authorities = user.getRoles().stream()
+        Set<GrantedAuthority> authorities = myUser.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toSet());
-        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), authorities);
+        return new User(myUser.getUserName(), myUser.getPassword(), authorities);
     }
 }

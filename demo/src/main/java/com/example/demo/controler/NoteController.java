@@ -1,11 +1,10 @@
 package com.example.demo.controler;
 
+import com.example.demo.model.MyUser;
 import com.example.demo.model.Note;
-import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.NoteService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,17 +20,14 @@ import java.util.Optional;
 @AllArgsConstructor
 public class NoteController {
 
-    @Autowired
-    private NoteService noteService;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final NoteService noteService;
+    private final UserRepository userRepository;
 
     @GetMapping("/main")
     public String mainPage(Model model, Principal principal) {
         if (principal != null) {
             String username = principal.getName();
-            Optional<User> existingUser = userRepository.findByUserName(username);
+            Optional<MyUser> existingUser = userRepository.findByUserName(username);
             if (existingUser.isPresent()) {
                 model.addAttribute("user", existingUser.get());
             }
@@ -49,7 +45,7 @@ public class NoteController {
     @GetMapping("/note/list")
     public String getNote(Model model, Principal principal) {
         String username = principal.getName();
-        Optional<User> existingUser = userRepository.findByUserName(username);
+        Optional<MyUser> existingUser = userRepository.findByUserName(username);
         if (existingUser.isPresent()) {
             List<Note> notes = noteService.getNotesByUser(existingUser.get());
             model.addAttribute("notes", notes);
@@ -60,7 +56,7 @@ public class NoteController {
     @PostMapping("/note/delete")
     public String deleteNote(@RequestParam("id") Long id, RedirectAttributes redirectAttributes, Principal principal) {
         String username = principal.getName();
-        Optional<User> existingUser = userRepository.findByUserName(username);
+        Optional<MyUser> existingUser = userRepository.findByUserName(username);
         if (existingUser.isPresent()) {
             noteService.deleteById(id, existingUser.get());
         }
@@ -72,7 +68,7 @@ public class NoteController {
     public String editNotePage(@RequestParam(value = "id", required = false) Long id, Model model, Principal principal) {
         String username = principal.getName();
         Note note = null;
-        Optional<User> existingUser = userRepository.findByUserName(username);
+        Optional<MyUser> existingUser = userRepository.findByUserName(username);
         if (existingUser.isPresent()) {
             if (id == null || id == 0) {
                 note = new Note();
@@ -92,7 +88,7 @@ public class NoteController {
     public String saveNote(@RequestParam("id") Long id, @RequestParam("title") String title,
                            @RequestParam("content") String content, RedirectAttributes redirectAttributes, Principal principal) {
         String username = principal.getName();
-        Optional<User> existingUser = userRepository.findByUserName(username);
+        Optional<MyUser> existingUser = userRepository.findByUserName(username);
         if (existingUser.isPresent()) {
             if (id == 0) {
                 noteService.add(title, content, existingUser.get());

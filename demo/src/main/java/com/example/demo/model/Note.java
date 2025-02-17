@@ -21,7 +21,7 @@ public class Note {
     private String content;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private MyUser user;
 
     public Note(String title, String content) {
         this.title = title;

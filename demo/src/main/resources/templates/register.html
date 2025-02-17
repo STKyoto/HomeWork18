@@ -50,7 +50,7 @@
 
 <div class="container">
     <h2>Registration</h2>
-    <form th:action="@{/register}" th:object="${user}" method="post">
+    <form th:action="@{/register}" th:object="${myUser}" method="post">
         <input type="text" th:field="*{userName}" placeholder="Enter login" required>
         <div th:if="${#fields.hasErrors('userName')}" class="error" th:errors="*{userName}"></div> <br>
 
