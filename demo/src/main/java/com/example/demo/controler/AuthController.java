@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AuthController {
-    private  AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+
+    public AuthController(AuthenticationManager authenticationManager){
+        this.authenticationManager = authenticationManager;
+    }
 
     @GetMapping("/login")
     public String loginForm(Model model) {
